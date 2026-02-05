@@ -50,4 +50,5 @@ export type MasterData = {
   id: number | string
   name?: string
   label?: string
+  title?: string
 }

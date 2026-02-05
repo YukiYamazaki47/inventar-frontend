@@ -1,6 +1,6 @@
 ﻿import { toast } from "@/components/ui/use-toast"
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api"
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(/\/+$/, "")
 
 const ACCESS_TOKEN_KEY = "access_token"
 const REFRESH_TOKEN_KEY = "refresh_token"
@@ -51,14 +51,17 @@ export function setUnauthorizedHandler(handler: () => void) {
   unauthorizedHandler = handler
 }
 
-type ApiFetchOptions = RequestInit & {
+type ApiBody = BodyInit | Record<string, unknown> | Array<unknown> | null
+
+type ApiFetchOptions = Omit<RequestInit, "body"> & {
+  body?: ApiBody
   responseType?: "json" | "blob"
   skipAuth?: boolean
   retry?: boolean
 }
 
 async function refreshTokens(refreshToken: string): Promise<Tokens> {
-  const res = await fetch(`${API_BASE_URL}/auth/refresh/`, {
+  const res = await fetch(buildApiUrl("/auth/refresh/"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -133,6 +136,15 @@ export function notifyApiError(error: unknown) {
   toast({ title: "Something went wrong", variant: "destructive" })
 }
 
+function buildApiUrl(path: string) {
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path
+  }
+
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`
+  return `${API_BASE_URL}${normalizedPath}`
+}
+
 export async function apiFetch<T>(
   path: string,
   options: ApiFetchOptions = {}
@@ -146,18 +158,27 @@ export async function apiFetch<T>(
     headers.set("Authorization", `Bearer ${tokens.accessToken}`)
   }
 
-  if (!headers.has("Content-Type") && init.body && !(init.body instanceof FormData)) {
-    headers.set("Content-Type", "application/json")
+  const rawBody = init.body
+  let body: BodyInit | null | undefined = rawBody as BodyInit | null | undefined
+
+  const isJsonBody =
+    rawBody &&
+    typeof rawBody === "object" &&
+    !(rawBody instanceof FormData) &&
+    !(rawBody instanceof Blob) &&
+    !(rawBody instanceof ArrayBuffer) &&
+    !ArrayBuffer.isView(rawBody) &&
+    !(rawBody instanceof URLSearchParams) &&
+    !(typeof ReadableStream !== "undefined" && rawBody instanceof ReadableStream)
+
+  if (isJsonBody) {
+    if (!headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json")
+    }
+    body = JSON.stringify(rawBody)
   }
 
-  const body =
-    init.body &&
-    headers.get("Content-Type")?.includes("application/json") &&
-    typeof init.body !== "string"
-      ? JSON.stringify(init.body)
-      : init.body
-
-  const res = await fetch(`${API_BASE_URL}${path}`, {
+  const res = await fetch(buildApiUrl(path), {
     ...init,
     headers,
     body,
