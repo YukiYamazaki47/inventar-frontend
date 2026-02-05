@@ -1,7 +1,7 @@
 ﻿import * as React from "react"
 import { Link, useParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/use-toast"
 
 import { apiFetch, normalizeList, notifyApiError } from "@/lib/api"
 import { canEditItem, isAdmin } from "@/lib/auth"
@@ -57,30 +57,6 @@ import {
 } from "@/components/ui/table"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { Skeleton } from "@/components/ui/skeleton"
-
-function ActionButton({
-  disabled,
-  tooltip,
-  children,
-  ...props
-}: React.ComponentProps<typeof Button> & { tooltip?: string }) {
-  if (!disabled) {
-    return <Button {...props}>{children}</Button>
-  }
-
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <span>
-          <Button {...props} disabled>
-            {children}
-          </Button>
-        </span>
-      </TooltipTrigger>
-      <TooltipContent>{tooltip ?? "Not allowed"}</TooltipContent>
-    </Tooltip>
-  )
-}
 
 export function ItemDetailPage() {
   const { id } = useParams()
@@ -144,7 +120,7 @@ export function ItemDetailPage() {
           subject_id: formValues.subject_id || undefined,
         },
       })
-      toast.success("Item updated")
+      toast({ title: "Item updated" })
       setEditMode(false)
       await itemQuery.refetch()
     } catch (error) {
@@ -155,7 +131,7 @@ export function ItemDetailPage() {
   const runAction = async (action: () => Promise<void>, success: string) => {
     try {
       await action()
-      toast.success(success)
+      toast({ title: success })
       await Promise.all([itemQuery.refetch(), eventsQuery.refetch()])
     } catch (error) {
       notifyApiError(error)
@@ -175,6 +151,16 @@ export function ItemDetailPage() {
   const [retireNote, setRetireNote] = React.useState("")
   const [noteText, setNoteText] = React.useState("")
 
+  React.useEffect(() => {
+    if (!item) return
+    setStatusId(item.status?.id ? String(item.status.id) : "")
+    setResponsibleId(
+      item.current_responsible?.id ? String(item.current_responsible.id) : ""
+    )
+    setPlaceId(item.current_place?.id ? String(item.current_place.id) : "")
+    setReturnPlaceId(item.current_place?.id ? String(item.current_place.id) : "")
+  }, [item])
+
   if (!itemId) {
     return <div className="text-sm text-muted-foreground">Invalid item id.</div>
   }
@@ -189,6 +175,10 @@ export function ItemDetailPage() {
         </div>
       </div>
     )
+  }
+
+  if (itemQuery.isError) {
+    return <div className="text-sm text-destructive">Failed to load item.</div>
   }
 
   if (!item) {
@@ -215,279 +205,347 @@ export function ItemDetailPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Dialog>
-          <DialogTrigger asChild>
-            <ActionButton disabled={!canEdit} tooltip="You are not allowed to change status">
-              Change Status
-            </ActionButton>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Change status</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3">
-              <Label>Status</Label>
-              <Select value={statusId} onValueChange={setStatusId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(masterQuery.data?.statuses ?? []).map((status) => (
-                    <SelectItem key={String(status.id)} value={String(status.id)}>
-                      {status.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Label>Note</Label>
-              <Textarea value={statusNote} onChange={(e) => setStatusNote(e.target.value)} />
-            </div>
-            <DialogFooter>
-              <Button
-                onClick={() =>
-                  runAction(
-                    () =>
-                      apiFetch(`/items/${itemId}/status`, {
-                        method: "POST",
-                        body: { status: statusId, note: statusNote || undefined },
-                      }),
-                    "Status updated"
-                  )
-                }
-              >
-                Save
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {canEdit ? (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>Change Status</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Change status</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3">
+                <Label>Status</Label>
+                <Select value={statusId} onValueChange={setStatusId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(masterQuery.data?.statuses ?? []).map((status) => (
+                      <SelectItem key={String(status.id)} value={String(status.id)}>
+                        {status.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Label>Note</Label>
+                <Textarea value={statusNote} onChange={(e) => setStatusNote(e.target.value)} />
+              </div>
+              <DialogFooter>
+                <Button
+                  onClick={() =>
+                    runAction(
+                      () =>
+                        apiFetch(`/items/${itemId}/status`, {
+                          method: "POST",
+                          body: { status: statusId, note: statusNote || undefined },
+                        }),
+                      "Status updated"
+                    )
+                  }
+                >
+                  Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button disabled>Change Status</Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>You are not allowed to change status.</TooltipContent>
+          </Tooltip>
+        )}
 
-        <Dialog>
-          <DialogTrigger asChild>
-            <ActionButton disabled={!canEdit} tooltip="You are not allowed to assign responsible">
-              Assign Responsible
-            </ActionButton>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Assign responsible</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3">
-              <Label>Responsible</Label>
-              <Select value={responsibleId} onValueChange={setResponsibleId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select user" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(masterQuery.data?.users ?? []).map((user) => (
-                    <SelectItem key={user.id} value={String(user.id)}>
-                      {getUserLabel(user)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Label>Note</Label>
-              <Textarea value={responsibleNote} onChange={(e) => setResponsibleNote(e.target.value)} />
-            </div>
-            <DialogFooter>
-              <Button
-                onClick={() =>
-                  runAction(
-                    () =>
-                      apiFetch(`/items/${itemId}/assign-responsible`, {
-                        method: "POST",
-                        body: { responsible_id: responsibleId, note: responsibleNote || undefined },
-                      }),
-                    "Responsible updated"
-                  )
-                }
-              >
-                Save
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {canEdit ? (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Assign Responsible</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Assign responsible</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3">
+                <Label>Responsible</Label>
+                <Select value={responsibleId} onValueChange={setResponsibleId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select user" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(masterQuery.data?.users ?? []).map((user) => (
+                      <SelectItem key={user.id} value={String(user.id)}>
+                        {getUserLabel(user)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Label>Note</Label>
+                <Textarea value={responsibleNote} onChange={(e) => setResponsibleNote(e.target.value)} />
+              </div>
+              <DialogFooter>
+                <Button
+                  onClick={() =>
+                    runAction(
+                      () =>
+                        apiFetch(`/items/${itemId}/assign-responsible`, {
+                          method: "POST",
+                          body: { responsible_id: responsibleId, note: responsibleNote || undefined },
+                        }),
+                      "Responsible updated"
+                    )
+                  }
+                >
+                  Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button variant="outline" disabled>
+                  Assign Responsible
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>You are not allowed to assign responsible.</TooltipContent>
+          </Tooltip>
+        )}
 
-        <Dialog>
-          <DialogTrigger asChild>
-            <ActionButton disabled={!canEdit} tooltip="You are not allowed to set place">
-              Set Place
-            </ActionButton>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Set place</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3">
-              <Label>Place</Label>
-              <Select value={placeId} onValueChange={setPlaceId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select place" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(masterQuery.data?.places ?? []).map((place) => (
-                    <SelectItem key={String(place.id)} value={String(place.id)}>
-                      {getLabel(place)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <DialogFooter>
-              <Button
-                onClick={() =>
-                  runAction(
-                    () =>
-                      apiFetch(`/items/${itemId}/set-place`, {
-                        method: "POST",
-                        body: { place_id: placeId },
-                      }),
-                    "Place updated"
-                  )
-                }
-              >
-                Save
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {canEdit ? (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Set Place</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Set place</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3">
+                <Label>Place</Label>
+                <Select value={placeId} onValueChange={setPlaceId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select place" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(masterQuery.data?.places ?? []).map((place) => (
+                      <SelectItem key={String(place.id)} value={String(place.id)}>
+                        {getLabel(place)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <DialogFooter>
+                <Button
+                  onClick={() =>
+                    runAction(
+                      () =>
+                        apiFetch(`/items/${itemId}/set-place`, {
+                          method: "POST",
+                          body: { place_id: placeId },
+                        }),
+                      "Place updated"
+                    )
+                  }
+                >
+                  Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button variant="outline" disabled>
+                  Set Place
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>You are not allowed to set place.</TooltipContent>
+          </Tooltip>
+        )}
 
-        <Dialog>
-          <DialogTrigger asChild>
-            <ActionButton disabled={!canEdit} tooltip="You are not allowed to borrow">
-              Borrow
-            </ActionButton>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Borrow item</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3">
-              <Label>Borrower</Label>
-              <Select value={borrowerId} onValueChange={setBorrowerId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select borrower" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(masterQuery.data?.users ?? []).map((user) => (
-                    <SelectItem key={user.id} value={String(user.id)}>
-                      {getUserLabel(user)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Label>Expected return</Label>
-              <Input type="date" value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} />
-              <Label>Note</Label>
-              <Textarea value={borrowNote} onChange={(e) => setBorrowNote(e.target.value)} />
-            </div>
-            <DialogFooter>
-              <Button
-                onClick={() =>
-                  runAction(
-                    () =>
-                      apiFetch(`/items/${itemId}/borrow`, {
-                        method: "POST",
-                        body: {
-                          borrower_id: borrowerId,
-                          expected_return_at: expectedReturn || undefined,
-                          note: borrowNote || undefined,
-                        },
-                      }),
-                    "Borrowed"
-                  )
-                }
-              >
-                Save
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {canEdit ? (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Borrow</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Borrow item</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3">
+                <Label>Borrower</Label>
+                <Select value={borrowerId} onValueChange={setBorrowerId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select borrower" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(masterQuery.data?.users ?? []).map((user) => (
+                      <SelectItem key={user.id} value={String(user.id)}>
+                        {getUserLabel(user)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Label>Expected return</Label>
+                <Input
+                  type="date"
+                  value={expectedReturn}
+                  onChange={(e) => setExpectedReturn(e.target.value)}
+                />
+                <Label>Note</Label>
+                <Textarea value={borrowNote} onChange={(e) => setBorrowNote(e.target.value)} />
+              </div>
+              <DialogFooter>
+                <Button
+                  onClick={() =>
+                    runAction(
+                      () =>
+                        apiFetch(`/items/${itemId}/borrow`, {
+                          method: "POST",
+                          body: {
+                            borrower_id: borrowerId,
+                            expected_return_at: expectedReturn || undefined,
+                            note: borrowNote || undefined,
+                          },
+                        }),
+                      "Borrowed"
+                    )
+                  }
+                >
+                  Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button variant="outline" disabled>
+                  Borrow
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>You are not allowed to borrow.</TooltipContent>
+          </Tooltip>
+        )}
 
-        <Dialog>
-          <DialogTrigger asChild>
-            <ActionButton disabled={!canEdit} tooltip="You are not allowed to return">
-              Return
-            </ActionButton>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Return item</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3">
-              <Label>Place</Label>
-              <Select value={returnPlaceId} onValueChange={setReturnPlaceId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select place" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(masterQuery.data?.places ?? []).map((place) => (
-                    <SelectItem key={String(place.id)} value={String(place.id)}>
-                      {getLabel(place)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Label>Note</Label>
-              <Textarea value={returnNote} onChange={(e) => setReturnNote(e.target.value)} />
-            </div>
-            <DialogFooter>
-              <Button
-                onClick={() =>
-                  runAction(
-                    () =>
-                      apiFetch(`/items/${itemId}/return`, {
-                        method: "POST",
-                        body: {
-                          place_id: returnPlaceId,
-                          note: returnNote || undefined,
-                        },
-                      }),
-                    "Returned"
-                  )
-                }
-              >
-                Save
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {canEdit ? (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Return</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Return item</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3">
+                <Label>Place</Label>
+                <Select value={returnPlaceId} onValueChange={setReturnPlaceId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select place" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(masterQuery.data?.places ?? []).map((place) => (
+                      <SelectItem key={String(place.id)} value={String(place.id)}>
+                        {getLabel(place)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Label>Note</Label>
+                <Textarea value={returnNote} onChange={(e) => setReturnNote(e.target.value)} />
+              </div>
+              <DialogFooter>
+                <Button
+                  onClick={() =>
+                    runAction(
+                      () =>
+                        apiFetch(`/items/${itemId}/return`, {
+                          method: "POST",
+                          body: {
+                            place_id: returnPlaceId,
+                            note: returnNote || undefined,
+                          },
+                        }),
+                      "Returned"
+                    )
+                  }
+                >
+                  Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button variant="outline" disabled>
+                  Return
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>You are not allowed to return.</TooltipContent>
+          </Tooltip>
+        )}
 
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <ActionButton variant="destructive" disabled={!admin} tooltip="Admin only">
-              Retire
-            </ActionButton>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Retire item</AlertDialogTitle>
-              <AlertDialogDescription>
-                This will mark the item as retired.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <div className="space-y-2">
-              <Label>Note</Label>
-              <Textarea value={retireNote} onChange={(e) => setRetireNote(e.target.value)} />
-            </div>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() =>
-                  runAction(
-                    () =>
-                      apiFetch(`/items/${itemId}/retire`, {
-                        method: "POST",
-                        body: { note: retireNote || undefined },
-                      }),
-                    "Item retired"
-                  )
-                }
-              >
-                Confirm
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        {admin ? (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">Retire</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Retire item</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will mark the item as retired.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="space-y-2">
+                <Label>Note</Label>
+                <Textarea value={retireNote} onChange={(e) => setRetireNote(e.target.value)} />
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() =>
+                    runAction(
+                      () =>
+                        apiFetch(`/items/${itemId}/retire`, {
+                          method: "POST",
+                          body: { note: retireNote || undefined },
+                        }),
+                      "Item retired"
+                    )
+                  }
+                >
+                  Confirm
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button variant="destructive" disabled>
+                  Retire
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>Admin only.</TooltipContent>
+          </Tooltip>
+        )}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -646,8 +704,8 @@ export function ItemDetailPage() {
               <Textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} />
               <DialogFooter>
                 <Button
-                  onClick={() =>
-                    runAction(
+                  onClick={async () => {
+                    await runAction(
                       () =>
                         apiFetch(`/items/${itemId}/events`, {
                           method: "POST",
@@ -655,7 +713,8 @@ export function ItemDetailPage() {
                         }),
                       "Note added"
                     )
-                  }
+                    setNoteText("")
+                  }}
                 >
                   Save
                 </Button>

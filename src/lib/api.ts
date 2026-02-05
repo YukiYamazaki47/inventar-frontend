@@ -1,4 +1,4 @@
-﻿import { toast } from "sonner"
+﻿import { toast } from "@/components/ui/use-toast"
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api"
 
@@ -114,19 +114,23 @@ function parseErrorMessage(payload?: ApiErrorPayload) {
 export function notifyApiError(error: unknown) {
   if (error instanceof ApiError) {
     if (error.status === 403) {
-      toast.error("You do not have permission to perform this action.")
+      toast({
+        title: "Not allowed",
+        description: "You do not have permission to perform this action.",
+        variant: "destructive",
+      })
       return
     }
-    toast.error(error.message)
+    toast({ title: "Request failed", description: error.message, variant: "destructive" })
     return
   }
 
   if (error instanceof Error) {
-    toast.error(error.message)
+    toast({ title: "Request failed", description: error.message, variant: "destructive" })
     return
   }
 
-  toast.error("Something went wrong")
+  toast({ title: "Something went wrong", variant: "destructive" })
 }
 
 export async function apiFetch<T>(

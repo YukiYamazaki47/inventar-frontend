@@ -1,6 +1,6 @@
 ﻿import * as React from "react"
 import { useNavigate } from "react-router-dom"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/use-toast"
 
 import { apiFetch, notifyApiError } from "@/lib/api"
 import { getLabel, getUserLabel } from "@/lib/display"
@@ -69,7 +69,7 @@ export function NewItemPage() {
         },
       })
 
-      toast.success("Item created")
+      toast({ title: "Item created" })
       navigate(`/inventory/${item.id}`)
     } catch (error) {
       notifyApiError(error)

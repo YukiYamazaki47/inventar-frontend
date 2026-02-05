@@ -1,5 +1,5 @@
 ﻿import * as React from "react"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/use-toast"
 
 import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,7 +17,11 @@ export function LoginPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!email || !password) {
-      toast.error("Please enter your email and password.")
+      toast({
+        title: "Missing credentials",
+        description: "Please enter your email and password.",
+        variant: "destructive",
+      })
       return
     }
 

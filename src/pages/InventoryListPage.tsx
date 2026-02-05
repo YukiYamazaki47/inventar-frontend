@@ -1,12 +1,12 @@
 ﻿import * as React from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { CheckIcon, FilterIcon, RotateCcwIcon } from "lucide-react"
 
 import { apiFetch, buildQueryString, downloadFile, normalizeList } from "@/lib/api"
 import { getLabel, getUserLabel } from "@/lib/display"
 import { isAdmin } from "@/lib/auth"
-import type { Item, ItemStatus, MasterData, User } from "@/lib/types"
+import type { Item, ItemStatus, User } from "@/lib/types"
 import { useAuth } from "@/context/auth-context"
 import { useMasterData } from "@/hooks/use-master-data"
 import { Badge } from "@/components/ui/badge"
@@ -42,7 +42,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/use-toast"
 
 const PAGE_SIZES = [10, 20, 50]
 
@@ -189,7 +189,7 @@ export function InventoryListPage() {
   const itemsQuery = useQuery({
     queryKey: ["items", queryString],
     queryFn: () => apiFetch<Item[] | { results: Item[]; count?: number }>(`/items${queryString}`),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   })
 
   const { results: items, count } = normalizeList(itemsQuery.data ?? [])
@@ -224,9 +224,9 @@ export function InventoryListPage() {
         sort,
       })
       await downloadFile(`/items/export.csv${exportQuery}`, "items.csv")
-      toast.success("Export started.")
+      toast({ title: "Export started" })
     } catch (error) {
-      toast.error("Export failed.")
+      toast({ title: "Export failed", variant: "destructive" })
     }
   }
 
@@ -495,6 +495,13 @@ export function InventoryListPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
+                {itemsQuery.isError && (
+                  <TableRow>
+                    <TableCell colSpan={10} className="text-center text-sm text-destructive">
+                      Failed to load items.
+                    </TableCell>
+                  </TableRow>
+                )}
                 {itemsQuery.isLoading &&
                   Array.from({ length: 6 }).map((_, index) => (
                     <TableRow key={`skeleton-${index}`}>
@@ -506,7 +513,7 @@ export function InventoryListPage() {
                     </TableRow>
                   ))}
 
-                {!itemsQuery.isLoading && items.length === 0 && (
+                {!itemsQuery.isLoading && !itemsQuery.isError && items.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={10} className="text-center text-sm text-muted-foreground">
                       No items found.

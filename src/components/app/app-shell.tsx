@@ -1,5 +1,4 @@
-﻿import * as React from "react"
-import { Link, useLocation } from "react-router-dom"
+﻿import { Link, useLocation } from "react-router-dom"
 import { LogOutIcon, UserIcon, LayoutGridIcon, ShieldIcon } from "lucide-react"
 
 import { useAuth } from "@/context/auth-context"
