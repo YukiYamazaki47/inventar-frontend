@@ -28,7 +28,7 @@ type User = {
   age: number
 }
 
-function DataTable({ endpoint = "https://didactic-adventure-7vv54prvjx9r2rrp9-8000.app.github.dev/users" }: { endpoint?: string }) {
+function DataTable({ endpoint = "http://127.0.0.1:8000/users" }: { endpoint?: string }) {
   async function fetchItems(url: string) {
     const res = await fetch(url)
     if (!res.ok) {
