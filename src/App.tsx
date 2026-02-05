@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
   SidebarInset,
 } from "@/components/ui/sidebar"
-
+import DataTable from "@/components/app/datatable"
 
 function App() {
   return (
@@ -40,7 +40,7 @@ function App() {
         <SidebarInset>
           <SidebarTrigger className="m-2" />
           <div className="p-4">
-            Main content goes here
+            <DataTable />
           </div>
         </SidebarInset>
       </div>
