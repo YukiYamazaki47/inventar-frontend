@@ -144,7 +144,7 @@ export function ItemDetailPage() {
   const [responsibleNote, setResponsibleNote] = React.useState("")
   const [placeId, setPlaceId] = React.useState("")
   const [borrowerId, setBorrowerId] = React.useState("")
-  const [expectedReturn, setExpectedReturn] = React.useState("")
+  const [expectedReturn] = React.useState("")
   const [borrowNote, setBorrowNote] = React.useState("")
   const [returnPlaceId, setReturnPlaceId] = React.useState("")
   const [returnNote, setReturnNote] = React.useState("")
@@ -395,12 +395,6 @@ export function ItemDetailPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Label>Voraussichtliche Rückgabe</Label>
-                <Input
-                  type="date"
-                  value={expectedReturn}
-                  onChange={(e) => setExpectedReturn(e.target.value)}
-                />
                 <Label>Notiz</Label>
                 <Textarea value={borrowNote} onChange={(e) => setBorrowNote(e.target.value)} />
               </div>
@@ -736,7 +730,6 @@ export function ItemDetailPage() {
                       <TableHead>Geändert am</TableHead>
                       <TableHead>Geändert von</TableHead>
                       <TableHead>Typ</TableHead>
-                      <TableHead>Notiz</TableHead>
                       <TableHead>Alt</TableHead>
                       <TableHead>Neu</TableHead>
                     </TableRow>
@@ -749,14 +742,13 @@ export function ItemDetailPage() {
                         </TableCell>
                         <TableCell>{getUserLabel(event.changed_by) || "-"}</TableCell>
                         <TableCell>{event.event_type ?? "-"}</TableCell>
-                        <TableCell>{event.note ?? "-"}</TableCell>
                         <TableCell>{event.old_value ?? event.old_id ?? "-"}</TableCell>
                         <TableCell>{event.new_value ?? event.new_id ?? "-"}</TableCell>
                       </TableRow>
                     ))}
                     {events.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center text-sm text-muted-foreground">
+                        <TableCell colSpan={5} className="text-center text-sm text-muted-foreground">
                           Noch keine Ereignisse vorhanden.
                         </TableCell>
                       </TableRow>
