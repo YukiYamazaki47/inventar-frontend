@@ -15,21 +15,23 @@ import type { User } from "@/lib/types"
 
 type LoginResponse = {
   access_token?: string
+  accessToken?: string
   access?: string
   token?: string
   refresh_token?: string
+  refreshToken?: string
   refresh?: string
 }
 
 function toTokens(data: LoginResponse): Tokens {
-  const accessToken = data.access_token ?? data.access ?? data.token
+  const accessToken = data.access_token ?? data.accessToken ?? data.access ?? data.token
   if (!accessToken) {
     throw new Error("Login response did not include an access token")
   }
 
   return {
     accessToken,
-    refreshToken: data.refresh_token ?? data.refresh,
+    refreshToken: data.refresh_token ?? data.refreshToken ?? data.refresh,
   }
 }
 
