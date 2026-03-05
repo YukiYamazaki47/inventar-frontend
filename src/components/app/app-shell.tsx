@@ -42,36 +42,36 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Sidebar collapsible="offcanvas">
           <SidebarHeader>
             <div className="px-2 py-2">
-              <p className="text-xs text-muted-foreground">School Inventory</p>
-              <p className="text-sm font-semibold">Inventory System</p>
+              <p className="text-xs text-muted-foreground">Schulinventar</p>
+              <p className="text-sm font-semibold">Inventarsystem</p>
             </div>
           </SidebarHeader>
           <SidebarSeparator />
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isInventory} tooltip="Inventory">
+                <SidebarMenuButton asChild isActive={isInventory} tooltip="Inventar">
                   <Link to="/inventory">
                     <LayoutGridIcon />
-                    <span>Inventory</span>
+                    <span>Inventar</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               {admin && (
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={isAdminPath} tooltip="Admin">
+                  <SidebarMenuButton asChild isActive={isAdminPath} tooltip="Administration">
                     <Link to="/admin">
                       <ShieldIcon />
-                      <span>Admin</span>
+                      <span>Administration</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
               <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isProfile} tooltip="Profile">
+                <SidebarMenuButton asChild isActive={isProfile} tooltip="Profil">
                   <Link to="/profile">
                     <UserIcon />
-                    <span>Profile</span>
+                    <span>Profil</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -79,7 +79,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </SidebarContent>
           <SidebarFooter>
             <div className="px-2 pb-2 text-xs text-muted-foreground">
-              {me?.display_name ?? me?.email ?? "Logged in"}
+              {me?.display_name ?? me?.email ?? "Angemeldet"}
             </div>
           </SidebarFooter>
         </Sidebar>
@@ -88,25 +88,25 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <header className="flex h-14 items-center gap-3 border-b px-4">
             <SidebarTrigger className="md:hidden" />
             <div className="flex flex-1 items-center gap-2">
-              <span className="text-sm font-semibold">Inventory</span>
+              <span className="text-sm font-semibold">Inventar</span>
               <span className="text-xs text-muted-foreground">/ {pathname}</span>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
                   <UserIcon className="size-4" />
-                  {me?.display_name ?? "Account"}
+                  {me?.display_name ?? "Konto"}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{me?.email ?? "User"}</DropdownMenuLabel>
+                <DropdownMenuLabel>{me?.email ?? "Benutzer"}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to="/profile">Profile</Link>
+                  <Link to="/profile">Profil</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={logout} className="text-destructive">
                   <LogOutIcon className="size-4" />
-                  Logout
+                  Abmelden
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

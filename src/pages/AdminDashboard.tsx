@@ -6,29 +6,29 @@ export function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">Admin</h1>
-        <p className="text-sm text-muted-foreground">Manage users and master data.</p>
+        <h1 className="text-xl font-semibold">Administration</h1>
+        <p className="text-sm text-muted-foreground">Benutzer und Stammdaten verwalten.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Users</CardTitle>
+            <CardTitle>Benutzer</CardTitle>
           </CardHeader>
           <CardContent>
             <Link className="text-primary underline underline-offset-4" to="/admin/users">
-              Manage users
+              Benutzer verwalten
             </Link>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Master data</CardTitle>
+            <CardTitle>Stammdaten</CardTitle>
           </CardHeader>
           <CardContent>
             <Link className="text-primary underline underline-offset-4" to="/admin/masterdata">
-              Manage master data
+              Stammdaten verwalten
             </Link>
           </CardContent>
         </Card>

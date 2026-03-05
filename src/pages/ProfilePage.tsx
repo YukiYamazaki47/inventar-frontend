@@ -9,13 +9,13 @@ export function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">Profile</h1>
-        <p className="text-sm text-muted-foreground">Your account details.</p>
+        <h1 className="text-xl font-semibold">Profil</h1>
+        <p className="text-sm text-muted-foreground">Details zu Ihrem Konto.</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Account</CardTitle>
+          <CardTitle>Konto</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div>
@@ -23,11 +23,11 @@ export function ProfilePage() {
             <p className="text-sm font-medium">{me?.display_name ?? "-"}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Email</p>
+            <p className="text-xs text-muted-foreground">E-Mail</p>
             <p className="text-sm font-medium">{me?.email ?? "-"}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Roles</p>
+            <p className="text-xs text-muted-foreground">Rollen</p>
             <div className="flex flex-wrap gap-2">
               {(roles ?? []).map((role) => (
                 <Badge key={role} variant="secondary">
@@ -37,7 +37,7 @@ export function ProfilePage() {
             </div>
           </div>
           <Button variant="outline" onClick={logout}>
-            Logout
+            Abmelden
           </Button>
         </CardContent>
       </Card>

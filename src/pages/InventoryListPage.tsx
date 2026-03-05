@@ -72,8 +72,8 @@ function StatusMultiSelect({
       </PopoverTrigger>
       <PopoverContent className="p-0" align="start">
         <Command>
-          <CommandInput placeholder="Search status..." />
-          <CommandEmpty>No status found.</CommandEmpty>
+          <CommandInput placeholder="Status suchen..." />
+          <CommandEmpty>Kein Status gefunden.</CommandEmpty>
           <CommandGroup>
             {statuses.map((status) => {
               const isSelected = selected.some(
@@ -121,8 +121,8 @@ function UserPicker({
       </PopoverTrigger>
       <PopoverContent className="p-0" align="start">
         <Command>
-          <CommandInput placeholder="Search user..." />
-          <CommandEmpty>No users found.</CommandEmpty>
+          <CommandInput placeholder="Benutzer suchen..." />
+          <CommandEmpty>Keine Benutzer gefunden.</CommandEmpty>
           <CommandGroup>
             <CommandItem
               onSelect={() => {
@@ -130,7 +130,7 @@ function UserPicker({
                 setOpen(false)
               }}
             >
-              Clear selection
+              Auswahl aufheben
             </CommandItem>
             {users.map((user) => (
               <CommandItem
@@ -224,9 +224,9 @@ export function InventoryListPage() {
         sort,
       })
       await downloadFile(`/items/export.csv${exportQuery}`, "items.csv")
-      toast({ title: "Export started" })
+      toast({ title: "Export gestartet" })
     } catch (error) {
-      toast({ title: "Export failed", variant: "destructive" })
+      toast({ title: "Export fehlgeschlagen", variant: "destructive" })
     }
   }
 
@@ -234,18 +234,18 @@ export function InventoryListPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Inventory</h1>
+          <h1 className="text-xl font-semibold">Inventar</h1>
           <p className="text-sm text-muted-foreground">
-            Track school assets and their status.
+            Schulisches Inventar und dessen Status verwalten.
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={exportCsv}>
-            Export CSV
+            CSV exportieren
           </Button>
           {admin && (
             <Button asChild>
-              <Link to="/inventory/new">New Item</Link>
+              <Link to="/inventory/new">Neuer Gegenstand</Link>
             </Button>
           )}
         </div>
@@ -256,28 +256,28 @@ export function InventoryListPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FilterIcon className="size-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Filters</span>
+              <span className="text-sm font-medium">Filter</span>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setFiltersOpen((open) => !open)}
             >
-              {filtersOpen ? "Hide" : "Show"}
+              {filtersOpen ? "Ausblenden" : "Einblenden"}
             </Button>
           </div>
 
           {filtersOpen && (
             <div className="grid gap-4 lg:grid-cols-3">
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">Search</label>
+                <label className="text-xs font-medium text-muted-foreground">Suche</label>
                 <Input
                   value={query}
                   onChange={(event) => {
                     setQuery(event.target.value)
                     setPage(1)
                   }}
-                  placeholder="Search items..."
+                  placeholder="Gegenstände suchen..."
                 />
               </div>
 
@@ -313,7 +313,7 @@ export function InventoryListPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">Department</label>
+                <label className="text-xs font-medium text-muted-foreground">Abteilung</label>
                 <Select
                   value={departmentId}
                   onValueChange={(value) => {
@@ -322,10 +322,10 @@ export function InventoryListPage() {
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="All departments" />
+                    <SelectValue placeholder="Alle Abteilungen" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="all">Alle</SelectItem>
                     {(masterQuery.data?.departments ?? []).map((dept) => (
                       <SelectItem key={String(dept.id)} value={String(dept.id)}>
                         {getLabel(dept)}
@@ -336,7 +336,7 @@ export function InventoryListPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">Group</label>
+                <label className="text-xs font-medium text-muted-foreground">Gruppe</label>
                 <Select
                   value={groupId}
                   onValueChange={(value) => {
@@ -345,10 +345,10 @@ export function InventoryListPage() {
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="All groups" />
+                    <SelectValue placeholder="Alle Gruppen" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="all">Alle</SelectItem>
                     {(masterQuery.data?.groups ?? []).map((group) => (
                       <SelectItem key={String(group.id)} value={String(group.id)}>
                         {getLabel(group)}
@@ -359,7 +359,7 @@ export function InventoryListPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">Subject</label>
+                <label className="text-xs font-medium text-muted-foreground">Fach</label>
                 <Select
                   value={subjectId}
                   onValueChange={(value) => {
@@ -368,10 +368,10 @@ export function InventoryListPage() {
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="All subjects" />
+                    <SelectValue placeholder="Alle Fächer" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="all">Alle</SelectItem>
                     {(masterQuery.data?.subjects ?? []).map((subject) => (
                       <SelectItem key={String(subject.id)} value={String(subject.id)}>
                         {getLabel(subject)}
@@ -382,7 +382,7 @@ export function InventoryListPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">Place</label>
+                <label className="text-xs font-medium text-muted-foreground">Ort</label>
                 <Select
                   value={placeId}
                   onValueChange={(value) => {
@@ -391,10 +391,10 @@ export function InventoryListPage() {
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="All places" />
+                    <SelectValue placeholder="Alle Orte" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="all">Alle</SelectItem>
                     {(masterQuery.data?.places ?? []).map((place) => (
                       <SelectItem key={String(place.id)} value={String(place.id)}>
                         {getLabel(place)}
@@ -405,7 +405,7 @@ export function InventoryListPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">Responsible</label>
+                <label className="text-xs font-medium text-muted-foreground">Verantwortlich</label>
                 <UserPicker
                   users={masterQuery.data?.users ?? []}
                   value={responsibleId}
@@ -413,12 +413,12 @@ export function InventoryListPage() {
                     setResponsibleId(value)
                     setPage(1)
                   }}
-                  placeholder="Select responsible"
+                  placeholder="Verantwortliche Person auswählen"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">Borrower</label>
+                <label className="text-xs font-medium text-muted-foreground">Entleiher</label>
                 <UserPicker
                   users={masterQuery.data?.users ?? []}
                   value={borrowerId}
@@ -426,7 +426,7 @@ export function InventoryListPage() {
                     setBorrowerId(value)
                     setPage(1)
                   }}
-                  placeholder="Select borrower"
+                  placeholder="Entleiher auswählen"
                 />
               </div>
 
@@ -439,13 +439,13 @@ export function InventoryListPage() {
                   }}
                 />
                 <div>
-                  <p className="text-sm font-medium">Only my items</p>
-                  <p className="text-xs text-muted-foreground">Responsible or borrower</p>
+                  <p className="text-sm font-medium">Nur meine Gegenstände</p>
+                  <p className="text-xs text-muted-foreground">Verantwortlich oder entliehen</p>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">Sort</label>
+                <label className="text-xs font-medium text-muted-foreground">Sortierung</label>
                 <Select
                   value={sort}
                   onValueChange={(value) => {
@@ -454,11 +454,11 @@ export function InventoryListPage() {
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Sort" />
+                    <SelectValue placeholder="Sortierung" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="-updated_at">Recently updated</SelectItem>
-                    <SelectItem value="updated_at">Oldest updated</SelectItem>
+                    <SelectItem value="-updated_at">Zuletzt aktualisiert</SelectItem>
+                    <SelectItem value="updated_at">Zuerst aktualisiert</SelectItem>
                     <SelectItem value="name">Name A-Z</SelectItem>
                     <SelectItem value="-name">Name Z-A</SelectItem>
                   </SelectContent>
@@ -468,7 +468,7 @@ export function InventoryListPage() {
               <div className="flex items-end">
                 <Button variant="outline" onClick={resetFilters} className="gap-2">
                   <RotateCcwIcon className="size-4" />
-                  Reset
+                  Zurücksetzen
                 </Button>
               </div>
             </div>
@@ -482,23 +482,23 @@ export function InventoryListPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Inventory No</TableHead>
+                  <TableHead>Inventarnummer</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Group</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Place</TableHead>
-                  <TableHead>Responsible</TableHead>
-                  <TableHead>Borrower</TableHead>
-                  <TableHead>Updated</TableHead>
+                  <TableHead>Abteilung</TableHead>
+                  <TableHead>Gruppe</TableHead>
+                  <TableHead>Fach</TableHead>
+                  <TableHead>Ort</TableHead>
+                  <TableHead>Verantwortlich</TableHead>
+                  <TableHead>Entleiher</TableHead>
+                  <TableHead>Aktualisiert</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {itemsQuery.isError && (
                   <TableRow>
                     <TableCell colSpan={10} className="text-center text-sm text-destructive">
-                      Failed to load items.
+                      Gegenstände konnten nicht geladen werden.
                     </TableCell>
                   </TableRow>
                 )}
@@ -516,7 +516,7 @@ export function InventoryListPage() {
                 {!itemsQuery.isLoading && !itemsQuery.isError && items.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={10} className="text-center text-sm text-muted-foreground">
-                      No items found.
+                      Keine Gegenstände gefunden.
                     </TableCell>
                   </TableRow>
                 )}
@@ -552,7 +552,7 @@ export function InventoryListPage() {
 
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
             <div className="text-xs text-muted-foreground">
-              Showing {items.length} items{count ? ` of ${count}` : ""}
+              Zeigt {items.length} Gegenstände{count ? ` von ${count}` : ""}
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -561,10 +561,10 @@ export function InventoryListPage() {
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                 disabled={page === 1}
               >
-                Previous
+                Zurück
               </Button>
               <span className="text-xs text-muted-foreground">
-                Page {page}{totalPages ? ` / ${totalPages}` : ""}
+                Seite {page}{totalPages ? ` / ${totalPages}` : ""}
               </span>
               <Button
                 variant="outline"
@@ -572,7 +572,7 @@ export function InventoryListPage() {
                 onClick={() => setPage((prev) => prev + 1)}
                 disabled={totalPages ? page >= totalPages : false}
               >
-                Next
+                Weiter
               </Button>
               <Select
                 value={String(pageSize)}
@@ -582,12 +582,12 @@ export function InventoryListPage() {
                 }}
               >
                 <SelectTrigger className="h-8 w-[110px]">
-                  <SelectValue placeholder="Rows" />
+                  <SelectValue placeholder="Zeilen" />
                 </SelectTrigger>
                 <SelectContent>
                   {PAGE_SIZES.map((size) => (
                     <SelectItem key={size} value={String(size)}>
-                      {size} / page
+                      {size} / Seite
                     </SelectItem>
                   ))}
                 </SelectContent>

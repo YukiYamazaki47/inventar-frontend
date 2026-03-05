@@ -120,7 +120,7 @@ export function ItemDetailPage() {
           subject_id: formValues.subject_id || undefined,
         },
       })
-      toast({ title: "Item updated" })
+      toast({ title: "Gegenstand wurde aktualisiert" })
       setEditMode(false)
       await itemQuery.refetch()
     } catch (error) {
@@ -162,7 +162,7 @@ export function ItemDetailPage() {
   }, [item])
 
   if (!itemId) {
-    return <div className="text-sm text-muted-foreground">Invalid item id.</div>
+    return <div className="text-sm text-muted-foreground">Ungültige Gegenstands-ID.</div>
   }
 
   if (itemQuery.isLoading) {
@@ -178,11 +178,11 @@ export function ItemDetailPage() {
   }
 
   if (itemQuery.isError) {
-    return <div className="text-sm text-destructive">Failed to load item.</div>
+    return <div className="text-sm text-destructive">Gegenstand konnte nicht geladen werden.</div>
   }
 
   if (!item) {
-    return <div className="text-sm text-muted-foreground">Item not found.</div>
+    return <div className="text-sm text-muted-foreground">Gegenstand nicht gefunden.</div>
   }
 
   return (
@@ -190,7 +190,7 @@ export function ItemDetailPage() {
       <div className="space-y-2">
         <div className="text-xs text-muted-foreground">
           <Link to="/inventory" className="underline underline-offset-4">
-            Inventory
+            Inventar
           </Link>
           <span> / {item.name}</span>
         </div>
@@ -199,7 +199,7 @@ export function ItemDetailPage() {
           {item.inventory_no && <Badge variant="secondary">{item.inventory_no}</Badge>}
           {item.status?.label && <Badge>{item.status.label}</Badge>}
           <span className="text-xs text-muted-foreground">
-            Updated {item.updated_at ? new Date(item.updated_at).toLocaleString() : "-"}
+            Aktualisiert {item.updated_at ? new Date(item.updated_at).toLocaleString() : "-"}
           </span>
         </div>
       </div>
@@ -208,17 +208,17 @@ export function ItemDetailPage() {
         {canEdit ? (
           <Dialog>
             <DialogTrigger asChild>
-              <Button>Change Status</Button>
+              <Button>Status ändern</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Change status</DialogTitle>
+                <DialogTitle>Status ändern</DialogTitle>
               </DialogHeader>
               <div className="space-y-3">
                 <Label>Status</Label>
                 <Select value={statusId} onValueChange={setStatusId}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
+                    <SelectValue placeholder="Status auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.statuses ?? []).map((status) => (
@@ -228,7 +228,7 @@ export function ItemDetailPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Label>Note</Label>
+                <Label>Notiz</Label>
                 <Textarea value={statusNote} onChange={(e) => setStatusNote(e.target.value)} />
               </div>
               <DialogFooter>
@@ -240,11 +240,11 @@ export function ItemDetailPage() {
                           method: "POST",
                           body: { status: statusId, note: statusNote || undefined },
                         }),
-                      "Status updated"
+                      "Status wurde aktualisiert"
                     )
                   }
                 >
-                  Save
+                  Speichern
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -253,27 +253,27 @@ export function ItemDetailPage() {
           <Tooltip>
             <TooltipTrigger asChild>
               <span>
-                <Button disabled>Change Status</Button>
+                <Button disabled>Status ändern</Button>
               </span>
             </TooltipTrigger>
-            <TooltipContent>You are not allowed to change status.</TooltipContent>
+            <TooltipContent>Sie dürfen den Status nicht ändern.</TooltipContent>
           </Tooltip>
         )}
 
         {canEdit ? (
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline">Assign Responsible</Button>
+              <Button variant="outline">Verantwortung zuweisen</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Assign responsible</DialogTitle>
+                <DialogTitle>Verantwortung zuweisen</DialogTitle>
               </DialogHeader>
               <div className="space-y-3">
-                <Label>Responsible</Label>
+                <Label>Verantwortlich</Label>
                 <Select value={responsibleId} onValueChange={setResponsibleId}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select user" />
+                    <SelectValue placeholder="Benutzer auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.users ?? []).map((user) => (
@@ -283,7 +283,7 @@ export function ItemDetailPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Label>Note</Label>
+                <Label>Notiz</Label>
                 <Textarea value={responsibleNote} onChange={(e) => setResponsibleNote(e.target.value)} />
               </div>
               <DialogFooter>
@@ -295,11 +295,11 @@ export function ItemDetailPage() {
                           method: "POST",
                           body: { responsible_id: responsibleId, note: responsibleNote || undefined },
                         }),
-                      "Responsible updated"
+                      "Verantwortung wurde aktualisiert"
                     )
                   }
                 >
-                  Save
+                  Speichern
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -309,28 +309,28 @@ export function ItemDetailPage() {
             <TooltipTrigger asChild>
               <span>
                 <Button variant="outline" disabled>
-                  Assign Responsible
+                  Verantwortung zuweisen
                 </Button>
               </span>
             </TooltipTrigger>
-            <TooltipContent>You are not allowed to assign responsible.</TooltipContent>
+            <TooltipContent>Sie dürfen keine verantwortliche Person zuweisen.</TooltipContent>
           </Tooltip>
         )}
 
         {canEdit ? (
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline">Set Place</Button>
+              <Button variant="outline">Ort festlegen</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Set place</DialogTitle>
+                <DialogTitle>Ort festlegen</DialogTitle>
               </DialogHeader>
               <div className="space-y-3">
-                <Label>Place</Label>
+                <Label>Ort</Label>
                 <Select value={placeId} onValueChange={setPlaceId}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select place" />
+                    <SelectValue placeholder="Ort auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.places ?? []).map((place) => (
@@ -350,11 +350,11 @@ export function ItemDetailPage() {
                           method: "POST",
                           body: { place_id: placeId },
                         }),
-                      "Place updated"
+                      "Ort wurde aktualisiert"
                     )
                   }
                 >
-                  Save
+                  Speichern
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -364,28 +364,28 @@ export function ItemDetailPage() {
             <TooltipTrigger asChild>
               <span>
                 <Button variant="outline" disabled>
-                  Set Place
+                  Ort festlegen
                 </Button>
               </span>
             </TooltipTrigger>
-            <TooltipContent>You are not allowed to set place.</TooltipContent>
+            <TooltipContent>Sie dürfen den Ort nicht festlegen.</TooltipContent>
           </Tooltip>
         )}
 
         {canEdit ? (
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline">Borrow</Button>
+              <Button variant="outline">Ausleihen</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Borrow item</DialogTitle>
+                <DialogTitle>Gegenstand ausleihen</DialogTitle>
               </DialogHeader>
               <div className="space-y-3">
-                <Label>Borrower</Label>
+                <Label>Entleiher</Label>
                 <Select value={borrowerId} onValueChange={setBorrowerId}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select borrower" />
+                    <SelectValue placeholder="Entleiher auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.users ?? []).map((user) => (
@@ -395,13 +395,13 @@ export function ItemDetailPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Label>Expected return</Label>
+                <Label>Voraussichtliche Rückgabe</Label>
                 <Input
                   type="date"
                   value={expectedReturn}
                   onChange={(e) => setExpectedReturn(e.target.value)}
                 />
-                <Label>Note</Label>
+                <Label>Notiz</Label>
                 <Textarea value={borrowNote} onChange={(e) => setBorrowNote(e.target.value)} />
               </div>
               <DialogFooter>
@@ -417,11 +417,11 @@ export function ItemDetailPage() {
                             note: borrowNote || undefined,
                           },
                         }),
-                      "Borrowed"
+                      "Ausleihe erfasst"
                     )
                   }
                 >
-                  Save
+                  Speichern
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -431,28 +431,28 @@ export function ItemDetailPage() {
             <TooltipTrigger asChild>
               <span>
                 <Button variant="outline" disabled>
-                  Borrow
+                  Ausleihen
                 </Button>
               </span>
             </TooltipTrigger>
-            <TooltipContent>You are not allowed to borrow.</TooltipContent>
+            <TooltipContent>Sie dürfen keine Ausleihe durchführen.</TooltipContent>
           </Tooltip>
         )}
 
         {canEdit ? (
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline">Return</Button>
+              <Button variant="outline">Rückgabe</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Return item</DialogTitle>
+                <DialogTitle>Gegenstand zurückgeben</DialogTitle>
               </DialogHeader>
               <div className="space-y-3">
-                <Label>Place</Label>
+                <Label>Ort</Label>
                 <Select value={returnPlaceId} onValueChange={setReturnPlaceId}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select place" />
+                    <SelectValue placeholder="Ort auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.places ?? []).map((place) => (
@@ -462,7 +462,7 @@ export function ItemDetailPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Label>Note</Label>
+                <Label>Notiz</Label>
                 <Textarea value={returnNote} onChange={(e) => setReturnNote(e.target.value)} />
               </div>
               <DialogFooter>
@@ -477,11 +477,11 @@ export function ItemDetailPage() {
                             note: returnNote || undefined,
                           },
                         }),
-                      "Returned"
+                      "Rückgabe erfasst"
                     )
                   }
                 >
-                  Save
+                  Speichern
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -491,32 +491,32 @@ export function ItemDetailPage() {
             <TooltipTrigger asChild>
               <span>
                 <Button variant="outline" disabled>
-                  Return
+                  Rückgabe
                 </Button>
               </span>
             </TooltipTrigger>
-            <TooltipContent>You are not allowed to return.</TooltipContent>
+            <TooltipContent>Sie dürfen keine Rückgabe durchführen.</TooltipContent>
           </Tooltip>
         )}
 
         {admin ? (
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">Retire</Button>
+              <Button variant="destructive">Ausmustern</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Retire item</AlertDialogTitle>
+                <AlertDialogTitle>Gegenstand ausmustern</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will mark the item as retired.
+                  Dadurch wird der Gegenstand als ausgemustert markiert.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="space-y-2">
-                <Label>Note</Label>
+                <Label>Notiz</Label>
                 <Textarea value={retireNote} onChange={(e) => setRetireNote(e.target.value)} />
               </div>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>Abbrechen</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() =>
                     runAction(
@@ -525,11 +525,11 @@ export function ItemDetailPage() {
                           method: "POST",
                           body: { note: retireNote || undefined },
                         }),
-                      "Item retired"
+                      "Gegenstand wurde ausgemustert"
                     )
                   }
                 >
-                  Confirm
+                  Bestätigen
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -539,11 +539,11 @@ export function ItemDetailPage() {
             <TooltipTrigger asChild>
               <span>
                 <Button variant="destructive" disabled>
-                  Retire
+                  Ausmustern
                 </Button>
               </span>
             </TooltipTrigger>
-            <TooltipContent>Admin only.</TooltipContent>
+            <TooltipContent>Nur für Administratoren.</TooltipContent>
           </Tooltip>
         )}
       </div>
@@ -558,7 +558,7 @@ export function ItemDetailPage() {
               onClick={() => setEditMode((prev) => !prev)}
               disabled={!canEdit}
             >
-              {editMode ? "Cancel" : "Edit"}
+              {editMode ? "Abbrechen" : "Bearbeiten"}
             </Button>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -571,7 +571,7 @@ export function ItemDetailPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Inventory No</Label>
+              <Label>Inventarnummer</Label>
               <Input
                 value={formValues.inventory_no}
                 onChange={(e) =>
@@ -581,7 +581,7 @@ export function ItemDetailPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>Beschreibung</Label>
               <Textarea
                 value={formValues.description}
                 onChange={(e) =>
@@ -592,7 +592,7 @@ export function ItemDetailPage() {
             </div>
             <div className="grid gap-3 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Department</Label>
+                <Label>Abteilung</Label>
                 <Select
                   value={formValues.department_id}
                   onValueChange={(value) =>
@@ -601,7 +601,7 @@ export function ItemDetailPage() {
                   disabled={!editMode}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Department" />
+                    <SelectValue placeholder="Abteilung" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.departments ?? []).map((dept) => (
@@ -613,14 +613,14 @@ export function ItemDetailPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Group</Label>
+                <Label>Gruppe</Label>
                 <Select
                   value={formValues.group_id}
                   onValueChange={(value) => setFormValues((prev) => ({ ...prev, group_id: value }))}
                   disabled={!editMode}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Group" />
+                    <SelectValue placeholder="Gruppe" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.groups ?? []).map((group) => (
@@ -632,7 +632,7 @@ export function ItemDetailPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Subject</Label>
+                <Label>Fach</Label>
                 <Select
                   value={formValues.subject_id}
                   onValueChange={(value) =>
@@ -641,7 +641,7 @@ export function ItemDetailPage() {
                   disabled={!editMode}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Subject" />
+                    <SelectValue placeholder="Fach" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.subjects ?? []).map((subject) => (
@@ -655,7 +655,7 @@ export function ItemDetailPage() {
             </div>
             {editMode && (
               <div className="flex justify-end">
-                <Button onClick={handleUpdate}>Save</Button>
+                <Button onClick={handleUpdate}>Speichern</Button>
               </div>
             )}
           </CardContent>
@@ -663,24 +663,24 @@ export function ItemDetailPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Current state</CardTitle>
+            <CardTitle>Aktueller Stand</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <div>
-              <p className="text-xs text-muted-foreground">Responsible</p>
+              <p className="text-xs text-muted-foreground">Verantwortlich</p>
               <p>{getUserLabel(item.current_responsible) || "-"}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Place</p>
+              <p className="text-xs text-muted-foreground">Ort</p>
               <p>{getLabel(item.current_place) || "-"}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Borrower</p>
+              <p className="text-xs text-muted-foreground">Entleiher</p>
               <p>{getUserLabel(item.current_borrower) || "-"}</p>
             </div>
             {item.updated_at && (
               <div>
-                <p className="text-xs text-muted-foreground">Last updated</p>
+                <p className="text-xs text-muted-foreground">Zuletzt aktualisiert</p>
                 <p>{new Date(item.updated_at).toLocaleString()}</p>
               </div>
             )}
@@ -690,16 +690,16 @@ export function ItemDetailPage() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Events</CardTitle>
+          <CardTitle>Ereignisse</CardTitle>
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm">
-                Add Note
+                Notiz hinzufügen
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add note</DialogTitle>
+                <DialogTitle>Notiz hinzufügen</DialogTitle>
               </DialogHeader>
               <Textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} />
               <DialogFooter>
@@ -711,12 +711,12 @@ export function ItemDetailPage() {
                           method: "POST",
                           body: { event_type: "NOTE", note: noteText },
                         }),
-                      "Note added"
+                      "Notiz wurde hinzugefügt"
                     )
                     setNoteText("")
                   }}
                 >
-                  Save
+                  Speichern
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -726,19 +726,19 @@ export function ItemDetailPage() {
           <Tabs defaultValue="history">
             <TabsList>
               <TabsTrigger value="history">Historie</TabsTrigger>
-              <TabsTrigger value="notes">Notiz</TabsTrigger>
+              <TabsTrigger value="notes">Notizen</TabsTrigger>
             </TabsList>
             <TabsContent value="history">
               <div className="overflow-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Changed At</TableHead>
-                      <TableHead>Changed By</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Note</TableHead>
-                      <TableHead>Old</TableHead>
-                      <TableHead>New</TableHead>
+                      <TableHead>Geändert am</TableHead>
+                      <TableHead>Geändert von</TableHead>
+                      <TableHead>Typ</TableHead>
+                      <TableHead>Notiz</TableHead>
+                      <TableHead>Alt</TableHead>
+                      <TableHead>Neu</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -757,7 +757,7 @@ export function ItemDetailPage() {
                     {events.length === 0 && (
                       <TableRow>
                         <TableCell colSpan={6} className="text-center text-sm text-muted-foreground">
-                          No events yet.
+                          Noch keine Ereignisse vorhanden.
                         </TableCell>
                       </TableRow>
                     )}
@@ -767,7 +767,7 @@ export function ItemDetailPage() {
             </TabsContent>
             <TabsContent value="notes">
               <p className="text-sm text-muted-foreground">
-                Use the “Add Note” action to add updates to this item.
+                Verwenden Sie die Aktion „Notiz hinzufügen“, um Updates zu diesem Gegenstand zu erfassen.
               </p>
             </TabsContent>
           </Tabs>

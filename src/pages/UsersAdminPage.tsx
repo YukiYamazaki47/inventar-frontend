@@ -86,7 +86,7 @@ export function UsersAdminPage() {
   const handleCreate = async (payload: Record<string, unknown>) => {
     try {
       await apiFetch("/users", { method: "POST", body: payload })
-      toast({ title: "User created" })
+      toast({ title: "Benutzer wurde erstellt" })
       await refresh()
     } catch (error) {
       notifyApiError(error)
@@ -96,7 +96,7 @@ export function UsersAdminPage() {
   const handleUpdate = async (userId: number | string, payload: Record<string, unknown>) => {
     try {
       await apiFetch(`/users/${userId}`, { method: "PATCH", body: payload })
-      toast({ title: "User updated" })
+      toast({ title: "Benutzer wurde aktualisiert" })
       await refresh()
     } catch (error) {
       notifyApiError(error)
@@ -106,7 +106,7 @@ export function UsersAdminPage() {
   const handleRoles = async (userId: number | string, roles: string[]) => {
     try {
       await apiFetch(`/users/${userId}/roles`, { method: "PUT", body: { roles } })
-      toast({ title: "Roles updated" })
+      toast({ title: "Rollen wurden aktualisiert" })
       await refresh()
     } catch (error) {
       notifyApiError(error)
@@ -116,7 +116,7 @@ export function UsersAdminPage() {
   const handleDeactivate = async (userId: number | string) => {
     try {
       await apiFetch(`/users/${userId}/deactivate`, { method: "PATCH" })
-      toast({ title: "User deactivated" })
+      toast({ title: "Benutzer wurde deaktiviert" })
       await refresh()
     } catch (error) {
       notifyApiError(error)
@@ -126,7 +126,7 @@ export function UsersAdminPage() {
   const handleDelete = async (userId: number | string) => {
     try {
       await apiFetch(`/users/${userId}`, { method: "DELETE" })
-      toast({ title: "User deleted" })
+      toast({ title: "Benutzer wurde gelöscht" })
       await refresh()
     } catch (error) {
       notifyApiError(error)
@@ -136,24 +136,24 @@ export function UsersAdminPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">Users</h1>
-        <p className="text-sm text-muted-foreground">Manage user access and roles.</p>
+        <h1 className="text-xl font-semibold">Benutzer</h1>
+        <p className="text-sm text-muted-foreground">Benutzerzugänge und Rollen verwalten.</p>
       </div>
 
       <Card>
         <CardContent className="space-y-4 pt-6">
           <div className="grid gap-4 md:grid-cols-3">
             <Input
-              placeholder="Search users..."
+              placeholder="Benutzer suchen..."
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
             <Select value={role} onValueChange={setRole}>
               <SelectTrigger>
-                <SelectValue placeholder="Role" />
+                <SelectValue placeholder="Rolle" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All roles</SelectItem>
+                <SelectItem value="all">Alle Rollen</SelectItem>
                 {roleOptions.map((roleItem) => (
                   <SelectItem key={roleItem} value={roleItem}>
                     {roleItem}
@@ -166,24 +166,24 @@ export function UsersAdminPage() {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="all">Alle</SelectItem>
+                <SelectItem value="active">Aktiv</SelectItem>
+                <SelectItem value="inactive">Inaktiv</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <Dialog>
             <DialogTrigger asChild>
-              <Button>Create user</Button>
+              <Button>Benutzer anlegen</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Create user</DialogTitle>
+                <DialogTitle>Benutzer anlegen</DialogTitle>
               </DialogHeader>
               <UserForm
                 onSubmit={handleCreate}
-                submitLabel="Create"
+                submitLabel="Anlegen"
               />
             </DialogContent>
           </Dialog>
@@ -196,10 +196,10 @@ export function UsersAdminPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Roles</TableHead>
+                <TableHead>E-Mail</TableHead>
+                <TableHead>Rollen</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>Erstellt am</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
@@ -207,7 +207,7 @@ export function UsersAdminPage() {
               {usersQuery.isError && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-sm text-destructive">
-                    Failed to load users.
+                    Benutzer konnten nicht geladen werden.
                   </TableCell>
                 </TableRow>
               )}
@@ -226,7 +226,7 @@ export function UsersAdminPage() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={user.active ? "default" : "outline"}>
-                      {user.active ? "Active" : "Inactive"}
+                      {user.active ? "Aktiv" : "Inaktiv"}
                     </Badge>
                   </TableCell>
                   <TableCell>{user.created_at ? new Date(user.created_at).toLocaleDateString() : "-"}</TableCell>
@@ -234,24 +234,24 @@ export function UsersAdminPage() {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="outline" size="sm">
-                          Actions
+                          Aktionen
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <Dialog>
                           <DialogTrigger asChild>
                             <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                              Edit
+                              Bearbeiten
                             </DropdownMenuItem>
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
-                              <DialogTitle>Edit user</DialogTitle>
+                              <DialogTitle>Benutzer bearbeiten</DialogTitle>
                             </DialogHeader>
                             <UserForm
                               defaultValues={user}
                               onSubmit={(payload) => handleUpdate(user.id, payload)}
-                              submitLabel="Save"
+                              submitLabel="Speichern"
                             />
                           </DialogContent>
                         </Dialog>
@@ -263,15 +263,15 @@ export function UsersAdminPage() {
                                 setRolesValue((user.roles ?? []).join(", "))
                               }}
                             >
-                              Change roles
+                              Rollen ändern
                             </DropdownMenuItem>
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
-                              <DialogTitle>Update roles</DialogTitle>
+                              <DialogTitle>Rollen aktualisieren</DialogTitle>
                             </DialogHeader>
                             <div className="space-y-2">
-                              <Label>Roles (comma separated)</Label>
+                              <Label>Rollen (kommagetrennt)</Label>
                               <Input
                                 value={rolesValue}
                                 onChange={(event) => setRolesValue(event.target.value)}
@@ -279,7 +279,7 @@ export function UsersAdminPage() {
                             </div>
                             <DialogFooter>
                               <Button onClick={() => handleRoles(user.id, parseRoles(rolesValue))}>
-                                Save
+                                Speichern
                               </Button>
                             </DialogFooter>
                           </DialogContent>
@@ -292,15 +292,15 @@ export function UsersAdminPage() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Deactivate user</AlertDialogTitle>
+                              <AlertDialogTitle>Benutzer deaktivieren</AlertDialogTitle>
                               <AlertDialogDescription>
-                                The user will no longer be able to sign in.
+                                Der Benutzer kann sich danach nicht mehr anmelden.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>Abbrechen</AlertDialogCancel>
                               <AlertDialogAction onClick={() => handleDeactivate(user.id)}>
-                                Confirm
+                                Bestätigen
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -311,20 +311,20 @@ export function UsersAdminPage() {
                               onSelect={(event) => event.preventDefault()}
                               className="text-destructive"
                             >
-                              Delete
+                              Löschen
                             </DropdownMenuItem>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete user</AlertDialogTitle>
+                              <AlertDialogTitle>Benutzer löschen</AlertDialogTitle>
                               <AlertDialogDescription>
-                                This action cannot be undone.
+                                Diese Aktion kann nicht rückgängig gemacht werden.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>Abbrechen</AlertDialogCancel>
                               <AlertDialogAction onClick={() => handleDelete(user.id)}>
-                                Delete
+                                Löschen
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -337,7 +337,7 @@ export function UsersAdminPage() {
               {!usersQuery.isLoading && !usersQuery.isError && users.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-sm text-muted-foreground">
-                    No users found.
+                    Keine Benutzer gefunden.
                   </TableCell>
                 </TableRow>
               )}
@@ -379,15 +379,15 @@ function UserForm({
   return (
     <form className="space-y-3" onSubmit={handleSubmit}>
       <div className="space-y-2">
-        <Label>Display name</Label>
+        <Label>Anzeigename</Label>
         <Input value={displayName} onChange={(event) => setDisplayName(event.target.value)} />
       </div>
       <div className="space-y-2">
-        <Label>Email</Label>
+        <Label>E-Mail</Label>
         <Input type="email" value={email} onChange={(event) => setEmail(event.target.value)} />
       </div>
       <div className="space-y-2">
-        <Label>Password (optional)</Label>
+        <Label>Passwort (optional)</Label>
         <Input
           type="password"
           value={password}
@@ -401,8 +401,8 @@ function UserForm({
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value="active">Aktiv</SelectItem>
+            <SelectItem value="inactive">Inaktiv</SelectItem>
           </SelectContent>
         </Select>
       </div>

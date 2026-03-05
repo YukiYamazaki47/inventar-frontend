@@ -26,7 +26,7 @@ type LoginResponse = {
 function toTokens(data: LoginResponse): Tokens {
   const accessToken = data.access_token ?? data.accessToken ?? data.access ?? data.token
   if (!accessToken) {
-    throw new Error("Login response did not include an access token")
+    throw new Error("Die Antwort zur Anmeldung enthielt kein Zugriffstoken")
   }
 
   return {

@@ -40,12 +40,12 @@ export function NewItemPage() {
 
   const validate = () => {
     const nextErrors: Record<string, string> = {}
-    if (!formValues.name) nextErrors.name = "Name is required"
-    if (!formValues.department_id) nextErrors.department_id = "Department is required"
-    if (!formValues.group_id) nextErrors.group_id = "Group is required"
-    if (!formValues.status) nextErrors.status = "Status is required"
+    if (!formValues.name) nextErrors.name = "Name ist erforderlich"
+    if (!formValues.department_id) nextErrors.department_id = "Abteilung ist erforderlich"
+    if (!formValues.group_id) nextErrors.group_id = "Gruppe ist erforderlich"
+    if (!formValues.status) nextErrors.status = "Status ist erforderlich"
     if (!formValues.current_responsible_id) {
-      nextErrors.current_responsible_id = "Responsible is required"
+      nextErrors.current_responsible_id = "Verantwortliche Person ist erforderlich"
     }
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
@@ -69,7 +69,7 @@ export function NewItemPage() {
         },
       })
 
-      toast({ title: "Item created" })
+      toast({ title: "Inventargegenstand wurde erstellt" })
       navigate(`/inventory/${item.id}`)
     } catch (error) {
       notifyApiError(error)
@@ -81,13 +81,13 @@ export function NewItemPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">New Item</h1>
-        <p className="text-sm text-muted-foreground">Create a new inventory item.</p>
+        <h1 className="text-xl font-semibold">Neuer Gegenstand</h1>
+        <p className="text-sm text-muted-foreground">Einen neuen Inventargegenstand anlegen.</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Item details</CardTitle>
+          <CardTitle>Gegenstandsdaten</CardTitle>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
@@ -101,7 +101,7 @@ export function NewItemPage() {
                 {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
               </div>
               <div className="space-y-2">
-                <Label>Inventory No</Label>
+                <Label>Inventarnummer</Label>
                 <Input
                   value={formValues.inventory_no}
                   onChange={(e) =>
@@ -112,7 +112,7 @@ export function NewItemPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>Beschreibung</Label>
               <Textarea
                 value={formValues.description}
                 onChange={(e) =>
@@ -123,7 +123,7 @@ export function NewItemPage() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Department *</Label>
+                <Label>Abteilung *</Label>
                 <Select
                   value={formValues.department_id}
                   onValueChange={(value) =>
@@ -131,7 +131,7 @@ export function NewItemPage() {
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select department" />
+                    <SelectValue placeholder="Abteilung auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.departments ?? []).map((dept) => (
@@ -147,13 +147,13 @@ export function NewItemPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Group *</Label>
+                <Label>Gruppe *</Label>
                 <Select
                   value={formValues.group_id}
                   onValueChange={(value) => setFormValues((prev) => ({ ...prev, group_id: value }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select group" />
+                    <SelectValue placeholder="Gruppe auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.groups ?? []).map((group) => (
@@ -167,7 +167,7 @@ export function NewItemPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Subject</Label>
+                <Label>Fach</Label>
                 <Select
                   value={formValues.subject_id}
                   onValueChange={(value) =>
@@ -175,7 +175,7 @@ export function NewItemPage() {
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select subject" />
+                    <SelectValue placeholder="Fach auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.subjects ?? []).map((subject) => (
@@ -194,7 +194,7 @@ export function NewItemPage() {
                   onValueChange={(value) => setFormValues((prev) => ({ ...prev, status: value }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
+                    <SelectValue placeholder="Status auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.statuses ?? []).map((status) => (
@@ -208,7 +208,7 @@ export function NewItemPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Responsible *</Label>
+                <Label>Verantwortlich *</Label>
                 <Select
                   value={formValues.current_responsible_id}
                   onValueChange={(value) =>
@@ -216,7 +216,7 @@ export function NewItemPage() {
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select responsible" />
+                    <SelectValue placeholder="Verantwortliche Person auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.users ?? []).map((user) => (
@@ -232,7 +232,7 @@ export function NewItemPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Place</Label>
+                <Label>Ort</Label>
                 <Select
                   value={formValues.current_place_id}
                   onValueChange={(value) =>
@@ -240,7 +240,7 @@ export function NewItemPage() {
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select place" />
+                    <SelectValue placeholder="Ort auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.places ?? []).map((place) => (
@@ -253,7 +253,7 @@ export function NewItemPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Borrower</Label>
+                <Label>Entleiher</Label>
                 <Select
                   value={formValues.current_borrower_id}
                   onValueChange={(value) =>
@@ -261,7 +261,7 @@ export function NewItemPage() {
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select borrower" />
+                    <SelectValue placeholder="Entleiher auswählen" />
                   </SelectTrigger>
                   <SelectContent>
                     {(masterQuery.data?.users ?? []).map((user) => (
@@ -276,7 +276,7 @@ export function NewItemPage() {
 
             <div className="flex justify-end">
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Create Item"}
+                {isSubmitting ? "Speichert..." : "Gegenstand anlegen"}
               </Button>
             </div>
           </form>

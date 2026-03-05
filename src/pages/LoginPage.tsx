@@ -18,8 +18,8 @@ export function LoginPage() {
     event.preventDefault()
     if (!email || !password) {
       toast({
-        title: "Missing credentials",
-        description: "Please enter your email and password.",
+        title: "Zugangsdaten fehlen",
+        description: "Bitte E-Mail-Adresse und Passwort eingeben.",
         variant: "destructive",
       })
       return
@@ -39,12 +39,12 @@ export function LoginPage() {
     <div className="flex min-h-svh items-center justify-center bg-muted/30 p-6">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Sign in</CardTitle>
+          <CardTitle>Anmelden</CardTitle>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E-Mail</Label>
               <Input
                 id="email"
                 type="email"
@@ -54,7 +54,7 @@ export function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Passwort</Label>
               <Input
                 id="password"
                 type="password"
@@ -63,7 +63,7 @@ export function LoginPage() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Signing in..." : "Login"}
+              {isSubmitting ? "Anmeldung läuft..." : "Anmelden"}
             </Button>
           </form>
         </CardContent>

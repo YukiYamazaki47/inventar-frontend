@@ -32,7 +32,7 @@ function DataTable({ endpoint = "http://127.0.0.1:8000/users" }: { endpoint?: st
   async function fetchItems(url: string) {
     const res = await fetch(url)
     if (!res.ok) {
-      throw new Error("Network response was not ok")
+      throw new Error("Netzwerkantwort war nicht erfolgreich")
     }
     return (await res.json()) as User[]
   }
@@ -51,14 +51,14 @@ function DataTable({ endpoint = "http://127.0.0.1:8000/users" }: { endpoint?: st
   return (
     <div>
       <Table>
-        <TableCaption>Users</TableCaption>
+        <TableCaption>Benutzer</TableCaption>
         <TableHeader>
           <tr>
             <TableHead>ID</TableHead>
-            <TableHead>First name</TableHead>
-            <TableHead>Last name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Age</TableHead>
+            <TableHead>Vorname</TableHead>
+            <TableHead>Nachname</TableHead>
+            <TableHead>E-Mail</TableHead>
+            <TableHead>Alter</TableHead>
           </tr>
         </TableHeader>
 
@@ -79,7 +79,7 @@ function DataTable({ endpoint = "http://127.0.0.1:8000/users" }: { endpoint?: st
           {isError && (
             <TableRow>
               <TableCell colSpan={5} className="text-red-600">
-                Error: {error?.message}
+                Fehler: {error?.message}
               </TableCell>
             </TableRow>
           )}
@@ -87,7 +87,7 @@ function DataTable({ endpoint = "http://127.0.0.1:8000/users" }: { endpoint?: st
           {!isLoading && !isError && items.length === 0 && (
             <TableRow>
               <TableCell colSpan={5} className="text-muted-foreground">
-                No users found.
+                Keine Benutzer gefunden.
               </TableCell>
             </TableRow>
           )}

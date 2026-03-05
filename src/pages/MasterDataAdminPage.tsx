@@ -45,13 +45,14 @@ import {
 import { Label } from "@/components/ui/label"
 
 const TABS = [
-  { key: "departments", label: "Departments", endpoint: "/departments" },
-  { key: "groups", label: "Groups", endpoint: "/groups" },
-  { key: "subjects", label: "Subjects", endpoint: "/subjects" },
-  { key: "places", label: "Places", endpoint: "/places" },
+  { key: "departments", label: "Abteilungen", singularLabel: "Abteilung", endpoint: "/departments" },
+  { key: "groups", label: "Gruppen", singularLabel: "Gruppe", endpoint: "/groups" },
+  { key: "subjects", label: "Fächer", singularLabel: "Fach", endpoint: "/subjects" },
+  { key: "places", label: "Orte", singularLabel: "Ort", endpoint: "/places" },
   {
     key: "statuses",
-    label: "Statuses",
+    label: "Statuswerte",
+    singularLabel: "Statuswert",
     endpoint: "/item-status",
     allowCreate: true,
     allowDelete: true,
@@ -62,8 +63,8 @@ export function MasterDataAdminPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">Master Data</h1>
-        <p className="text-sm text-muted-foreground">Manage catalogs used across inventory.</p>
+        <h1 className="text-xl font-semibold">Stammdaten</h1>
+        <p className="text-sm text-muted-foreground">Kataloge für das Inventar verwalten.</p>
       </div>
 
       <Card>
@@ -80,6 +81,7 @@ export function MasterDataAdminPage() {
               <TabsContent key={tab.key} value={tab.key}>
                 <MasterDataTab
                   label={tab.label}
+                  singularLabel={tab.singularLabel}
                   endpoint={tab.endpoint}
                   allowCreate={tab.allowCreate}
                   allowDelete={tab.allowDelete}
@@ -95,11 +97,13 @@ export function MasterDataAdminPage() {
 
 function MasterDataTab({
   label,
+  singularLabel,
   endpoint,
   allowCreate = true,
   allowDelete = true,
 }: {
   label: string
+  singularLabel: string
   endpoint: string
   allowCreate?: boolean
   allowDelete?: boolean
@@ -128,7 +132,7 @@ function MasterDataTab({
         method: "POST",
         body: { name: nameInput, label: nameInput },
       })
-      toast({ title: `${label} created` })
+      toast({ title: `${singularLabel} wurde erstellt` })
       setNameInput("")
       await refresh()
     } catch (error) {
@@ -143,7 +147,7 @@ function MasterDataTab({
         method: "PATCH",
         body: { name: nameInput, label: nameInput },
       })
-      toast({ title: `${label} updated` })
+      toast({ title: `${singularLabel} wurde aktualisiert` })
       setEditItem(null)
       setNameInput("")
       await refresh()
@@ -155,7 +159,7 @@ function MasterDataTab({
   const deleteItem = async (id: number | string) => {
     try {
       await apiFetch(`${endpoint}/${id}`, { method: "DELETE" })
-      toast({ title: `${label} deleted` })
+      toast({ title: `${singularLabel} wurde gelöscht` })
       await refresh()
     } catch (error) {
       notifyApiError(error)
@@ -166,30 +170,30 @@ function MasterDataTab({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Input
-          placeholder={`Search ${label.toLowerCase()}...`}
+          placeholder={`${label} suchen...`}
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
         {allowCreate ? (
           <Dialog>
             <DialogTrigger asChild>
-              <Button onClick={() => setNameInput("")}>Create</Button>
+              <Button onClick={() => setNameInput("")}>Anlegen</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Create {label}</DialogTitle>
+                <DialogTitle>{singularLabel} anlegen</DialogTitle>
               </DialogHeader>
               <div className="space-y-2">
                 <Label>Name</Label>
                 <Input value={nameInput} onChange={(event) => setNameInput(event.target.value)} />
               </div>
               <DialogFooter>
-                <Button onClick={createItem}>Save</Button>
+                <Button onClick={createItem}>Speichern</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         ) : (
-          <Badge variant="outline">Create disabled</Badge>
+          <Badge variant="outline">Anlegen deaktiviert</Badge>
         )}
       </div>
 
@@ -205,7 +209,7 @@ function MasterDataTab({
             {query.isError && (
               <TableRow>
                 <TableCell colSpan={2} className="text-center text-sm text-destructive">
-                  Failed to load entries.
+                  Einträge konnten nicht geladen werden.
                 </TableCell>
               </TableRow>
             )}
@@ -224,12 +228,12 @@ function MasterDataTab({
                             setNameInput(getLabel(item))
                           }}
                         >
-                          Edit
+                          Bearbeiten
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Edit {label}</DialogTitle>
+                          <DialogTitle>{singularLabel} bearbeiten</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-2">
                           <Label>Name</Label>
@@ -239,7 +243,7 @@ function MasterDataTab({
                           />
                         </div>
                         <DialogFooter>
-                          <Button onClick={updateItem}>Save</Button>
+                          <Button onClick={updateItem}>Speichern</Button>
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
@@ -247,26 +251,26 @@ function MasterDataTab({
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="outline" size="sm">
-                            Delete
+                            Löschen
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Delete {label}</AlertDialogTitle>
+                            <AlertDialogTitle>{singularLabel} löschen</AlertDialogTitle>
                             <AlertDialogDescription>
-                              This will remove the entry.
+                              Dadurch wird der Eintrag entfernt.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
                             <AlertDialogAction onClick={() => deleteItem(item.id)}>
-                              Confirm
+                              Bestätigen
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
                     ) : (
-                      <Badge variant="outline">Delete disabled</Badge>
+                      <Badge variant="outline">Löschen deaktiviert</Badge>
                     )}
                   </div>
                 </TableCell>
@@ -275,7 +279,7 @@ function MasterDataTab({
             {!query.isLoading && !query.isError && filtered.length === 0 && (
               <TableRow>
                 <TableCell colSpan={2} className="text-center text-sm text-muted-foreground">
-                  No entries found.
+                  Keine Einträge gefunden.
                 </TableCell>
               </TableRow>
             )}

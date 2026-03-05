@@ -84,7 +84,7 @@ async function refreshTokens(refreshToken: string): Promise<Tokens> {
   })
 
   if (!res.ok) {
-    throw new ApiError("Failed to refresh session", res.status)
+    throw new ApiError("Sitzung konnte nicht erneuert werden", res.status)
   }
 
   const data = (await res.json()) as TokenResponse
@@ -92,7 +92,7 @@ async function refreshTokens(refreshToken: string): Promise<Tokens> {
   const nextRefreshToken = data.refresh_token ?? data.refreshToken ?? data.refresh
 
   if (!accessToken) {
-    throw new ApiError("Refresh response did not include an access token", res.status)
+    throw new ApiError("Antwort zur Aktualisierung enthielt kein Zugriffstoken", res.status)
   }
 
   return {
@@ -127,7 +127,7 @@ function parseErrorMessage(payload?: ApiErrorPayload) {
     payload?.detail ||
     payload?.message ||
     payload?.error ||
-    "Something went wrong"
+    "Etwas ist schiefgelaufen"
   )
 }
 
@@ -135,22 +135,22 @@ export function notifyApiError(error: unknown) {
   if (error instanceof ApiError) {
     if (error.status === 403) {
       toast({
-        title: "Not allowed",
-        description: "You do not have permission to perform this action.",
+        title: "Nicht erlaubt",
+        description: "Sie haben keine Berechtigung für diese Aktion.",
         variant: "destructive",
       })
       return
     }
-    toast({ title: "Request failed", description: error.message, variant: "destructive" })
+    toast({ title: "Anfrage fehlgeschlagen", description: error.message, variant: "destructive" })
     return
   }
 
   if (error instanceof Error) {
-    toast({ title: "Request failed", description: error.message, variant: "destructive" })
+    toast({ title: "Anfrage fehlgeschlagen", description: error.message, variant: "destructive" })
     return
   }
 
-  toast({ title: "Something went wrong", variant: "destructive" })
+  toast({ title: "Etwas ist schiefgelaufen", variant: "destructive" })
 }
 
 function buildApiUrl(path: string) {
