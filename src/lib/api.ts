@@ -18,9 +18,11 @@ export type ApiErrorPayload = {
 
 type TokenResponse = {
   access_token?: string
+  accessToken?: string
   access?: string
   token?: string
   refresh_token?: string
+  refreshToken?: string
   refresh?: string
 }
 
@@ -86,8 +88,8 @@ async function refreshTokens(refreshToken: string): Promise<Tokens> {
   }
 
   const data = (await res.json()) as TokenResponse
-  const accessToken = data.access_token ?? data.access ?? data.token
-  const nextRefreshToken = data.refresh_token ?? data.refresh
+  const accessToken = data.access_token ?? data.accessToken ?? data.access ?? data.token
+  const nextRefreshToken = data.refresh_token ?? data.refreshToken ?? data.refresh
 
   if (!accessToken) {
     throw new ApiError("Refresh response did not include an access token", res.status)
