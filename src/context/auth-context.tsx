@@ -8,8 +8,30 @@ import {
   getStoredTokens,
   setStoredTokens,
   setUnauthorizedHandler,
+  type Tokens,
 } from "@/lib/api"
 import type { User } from "@/lib/types"
+
+
+type LoginResponse = {
+  access_token?: string
+  access?: string
+  token?: string
+  refresh_token?: string
+  refresh?: string
+}
+
+function toTokens(data: LoginResponse): Tokens {
+  const accessToken = data.access_token ?? data.access ?? data.token
+  if (!accessToken) {
+    throw new Error("Login response did not include an access token")
+  }
+
+  return {
+    accessToken,
+    refreshToken: data.refresh_token ?? data.refresh,
+  }
+}
 
 type AuthContextValue = {
   me: User | null
@@ -54,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = React.useCallback(
     async (email: string, password: string) => {
-      const data = await apiFetch<{ access_token: string; refresh_token: string }>(
+      const data = await apiFetch<LoginResponse>(
         "/auth/login/",
         {
           method: "POST",
@@ -63,10 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       )
 
-      setStoredTokens({
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
-      })
+      setStoredTokens(toTokens(data))
       setTokens(getStoredTokens())
       await queryClient.invalidateQueries({ queryKey: ["me"] })
       navigate("/inventory", { replace: true })

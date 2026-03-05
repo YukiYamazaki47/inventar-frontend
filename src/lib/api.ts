@@ -7,13 +7,21 @@ const REFRESH_TOKEN_KEY = "refresh_token"
 
 export type Tokens = {
   accessToken: string
-  refreshToken: string
+  refreshToken?: string
 }
 
 export type ApiErrorPayload = {
   detail?: string
   message?: string
   error?: string
+}
+
+type TokenResponse = {
+  access_token?: string
+  access?: string
+  token?: string
+  refresh_token?: string
+  refresh?: string
 }
 
 export class ApiError extends Error {
@@ -31,13 +39,17 @@ export class ApiError extends Error {
 export function getStoredTokens(): Tokens | null {
   const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY)
   const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
-  if (!accessToken || !refreshToken) return null
-  return { accessToken, refreshToken }
+  if (!accessToken) return null
+  return { accessToken, refreshToken: refreshToken ?? undefined }
 }
 
 export function setStoredTokens(tokens: Tokens) {
   localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken)
-  localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken)
+  if (tokens.refreshToken) {
+    localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken)
+    return
+  }
+  localStorage.removeItem(REFRESH_TOKEN_KEY)
 }
 
 export function clearStoredTokens() {
@@ -73,14 +85,17 @@ async function refreshTokens(refreshToken: string): Promise<Tokens> {
     throw new ApiError("Failed to refresh session", res.status)
   }
 
-  const data = (await res.json()) as {
-    access_token: string
-    refresh_token: string
+  const data = (await res.json()) as TokenResponse
+  const accessToken = data.access_token ?? data.access ?? data.token
+  const nextRefreshToken = data.refresh_token ?? data.refresh
+
+  if (!accessToken) {
+    throw new ApiError("Refresh response did not include an access token", res.status)
   }
 
   return {
-    accessToken: data.access_token,
-    refreshToken: data.refresh_token,
+    accessToken,
+    refreshToken: nextRefreshToken,
   }
 }
 
