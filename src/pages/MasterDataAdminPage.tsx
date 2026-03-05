@@ -53,8 +53,8 @@ const TABS = [
     key: "statuses",
     label: "Statuses",
     endpoint: "/item-status",
-    allowCreate: false,
-    allowDelete: false,
+    allowCreate: true,
+    allowDelete: true,
   },
 ]
 
