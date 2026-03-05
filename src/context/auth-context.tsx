@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         {
           method: "POST",
           skipAuth: true,
-          body: { email, password, passwort: password },
+          body: { email, password },
         }
       )
 
